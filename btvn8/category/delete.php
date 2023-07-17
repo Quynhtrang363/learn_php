@@ -1,7 +1,12 @@
 <?php
     require_once 'pdo.php';
-    $id = ['id' => $_POST['id']];
-    deleteData($id);
-    header("Location: http://localhost/learn_php/category/index.php");
-?>
+    $categoryConnection = new CategoryConnection();
+
+    $id = $_POST['id'];
+    $data = [
+        'id' => $id
+    ];
+    $categoryConnection->deleteData($data);
+
+    header("Location: http://localhost/huyenmy/category/index.php");
 ?>
