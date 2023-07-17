@@ -1,67 +1,37 @@
 <?php
-abstract class Connection {
-    protected $host;
-    protected $db;
-    protected $username;
-    protected $password;
-    protected $connection;
+    require_once "../category/pdo.php";
 
-    public function __construct() {
-        $this->host = 'localhost';
-        $this->db = 'testOOP';
-        $this->username = 'root';
-        $this->password = '';
-        $this->connection = $this->connect();
-    }
-
-    public function connect() {
-        try {
-            $conn = new PDO("mysql:host={$this->host};dbname={$this->db}", $this->username, $this->password);
-
-            $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            return $conn;
-        } catch (Exception $e) {
-            die($e->getMessage());
-        }
-    }
-
-    public function prepareSQL($sql) {
-        return $this->connection->prepare($sql);
-    }
-}
-
-class CategoryConnection extends Connection {
-    public function getData() {
-        $sql = "SELECT * FROM category";
-        $select = $this->prepareSQL($sql);
+    class ProductConnection extends Connection {
+    public function getProdData(){
+        $sql = "SELECT * FROM product INNER JOIN category ON product.cateId = category.id";
+        $select =$this-> prepareSQL($sql);
         $select->execute();
         return $select->fetchAll();
     }
 
-    public function getOneData($data) {
-        $sql = "SELECT * FROM category WHERE id = :id";
+    public function getOneProdData($data){
+        $sql = "SELECT * FROM product WHERE prodId = :id";
         $select = $this->prepareSQL($sql);
         $select->execute($data);
         return $select->fetchAll();
     }
 
-    public function createNewData($data) {
-        $sql = "INSERT INTO category (name) VALUES (:name)";
+    public function createNewProdData($data){
+        $sql = "INSERT INTO product VALUES (:prodId, :prodName, :prodPrice, :cateId)";
         $create = $this->prepareSQL($sql);
         $create->execute($data);
     }
 
-    public function updateData($data) {
-        $sql = "UPDATE category SET name = :name WHERE id = :id";
+    public function updateProdData($data){
+        $sql = "UPDATE product SET prodName = :prodName, prodPrice = :prodPrice, cateId = :cateId  WHERE prodId = :id";
+        $update = $this->prepareSQL($sql);
+        $update->execute($data);
+    }
+    public function deleteProdData($data){
+        $sql = "DELETE FROM product WHERE prodId = :id";
         $update = $this->prepareSQL($sql);
         $update->execute($data);
     }
 
-    public function deleteData($data) {
-        $sql = "DELETE FROM category WHERE id = :id";
-        $update = $this->prepareSQL($sql);
-        $update->execute($data);
     }
-}
-
 ?>
